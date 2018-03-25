@@ -31,18 +31,18 @@ main(int c, char **v)
 	sk_num = lseek(fd, 0, SEEK_SET );
 	printf("sk_num : %d\n", sk_num);
 
-	rd_num = read(fd, rd_buf, 10);
+	rd_num = read(fd, rd_buf, 11);
 	//rd_buf[10] = '\0';
 	printf("%s\n", rd_buf);
 	for (i = 0; i < 20; i ++)
-		printf("%d: %c\n", i, rd_buf[i]);
+		printf("%c", rd_buf[i]);
 	
-	printf("rd_num is %d\n", rd_num);
+	printf("\nrd_num is %d\n", rd_num);
 	
 
 	close(fd);
-	return 0;
-
+	//return 0;
+	exit(0);
 }
 
 
