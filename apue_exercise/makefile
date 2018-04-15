@@ -2,7 +2,7 @@
 #
 
 obj = exe
-file = *.c
+file = *.c *.h
 
 $(obj):$(file)
 	gcc -o $(obj) $(file)

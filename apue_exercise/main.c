@@ -4,7 +4,7 @@
 #include <string.h>
 #include <fcntl.h>
 
-
+#include "apue.h"
 
 /*
  * chapter 3 is about file read/write/lseek/
@@ -61,18 +61,60 @@ chpt3(void)
 	if((wr_num = write(dup_r2, str, strlen(str))) != strlen(str))
 		printf("write dup_r failed, write bytes is %d\n", wr_num);
 
+	printf("get fd flag: %d\n", fcntl(fd, F_GETFD));
+	fcntl(fd, F_SETFD, 1); // fd flag only can be 0 or 1, 0 is default.
+	printf("get fd flag after set: %d\n", fcntl(fd, F_GETFD));
+	printf("get the status flag: 0x%x\n", fcntl(fd, F_GETFL));	
+	printf("get the process id: %d\n", fcntl(fd, F_GETOWN));
 
 	close(fd);
+	
+	fd = open(path, O_RDWR);
+	int fd_new = dup(fd);
+	int fd2 = open(path, O_RDONLY);
+	printf("fd is %d, fd_new is %d, fd2 is %d\n", fd, fd_new, fd2);
+	close(fd);
+	int r;
+	if ((r = close(fd_new)) < 0)
+		printf("close failed\n");
+	close(fd2);
+
 }
 
 void
 chpt4()
 {
+	char * path = "/dev/tty";
+	struct stat buf;
+	int i = 0;
+	char *ptr;
 
+	i = lstat(path, &buf);
+	printf("i: %d\n", i);
+	printf("buf.st_mode is 0x%x\n", buf.st_mode & S_IFMT);
+	if (S_ISREG(buf.st_mode))
+		ptr = "regular";
+	else if (S_ISDIR(buf.st_mode))
+		ptr = "directory";
+	else if (S_ISCHR(buf.st_mode))
+		ptr = "character special";
+	else if (S_ISBLK(buf.st_mode))
+		ptr = "block special";
+	else if (S_ISFIFO(buf.st_mode))
+		ptr = "fifo";
+	else if (S_ISLNK(buf.st_mode))
+		ptr = "symbolic link";
+	else if (S_ISSOCK(buf.st_mode))
+		ptr = "socket";
+	else
+		ptr = "** unknown mode **";
+	printf("%s\n", ptr);
 
-
-
-
+	// create a dir, like mkdir
+	char *c_path = "created_path\\";
+	int fd;
+	if ((fd = open(c_path, O_CREAT | O_WRONLY, S_IWUSR | S_IXUSR)) < 0)
+		printf("create path failed");
 }
 
 
@@ -81,9 +123,16 @@ chpt4()
 int
 main(int c, char **v)
 {
-	chpt3();
+#if 0
+	int i;
+	printf("c is %d\n", c);
+	for (i = 0; i < c; i ++) {
+		printf("%s\n", *v);	
+	}
+#endif	
+	//chpt3();
 
-
+	chpt4();
 	
 	exit(0);
 }
